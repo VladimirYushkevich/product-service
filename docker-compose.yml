@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:14.3
+    container_name: postgres
+    #    deploy:
+    #      resources:
+    #        limits:
+    #          memory: 512M
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: 123
+      POSTGRES_DB: mms
+    ports:
+      - "5432:5432"
+
+  flyway:
+    image: flyway/flyway:8.5.9-alpine
+    container_name: flyway
+    depends_on:
+      - postgres
+    environment:
+      - FLYWAY_USER=user
+      - FLYWAY_PASSWORD=123
+      - FLYWAY_URL=jdbc:postgresql://postgres:5432/mms
+    volumes:
+      - ./src/main/resources/db/migration:/flyway/sql
+    command: -connectRetries=3 -baselineOnMigrate=true migrate
