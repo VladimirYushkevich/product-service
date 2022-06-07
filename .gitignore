@@ -1,5 +1,5 @@
 .env
-.jpb
+.jpb/
 .java-version
 .gradle
 build/
