@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
@@ -101,5 +102,18 @@ public class CategoryServiceTest {
             new CategoryDTO(3L, "b", 1L, "root/b"),
             new CategoryDTO(4L, "c", 2L, "root/a/c")),
         categoryService.findAllCategories());
+  }
+
+  @Test
+  @DisplayName("Should save new category and return DTO with breadcrumb.")
+  void shouldSaveNewCategoryAndReturnDTO() {
+    Category category = new Category(2L, "a", 1L);
+    when(categoryRepository.save(any())).thenReturn(category);
+    when(categoryRepository.findAll())
+        .thenReturn(List.of(new Category(1L, "root", null), category));
+
+    assertEquals(
+        new CategoryDTO(2L, "a", 1L, "root/a"),
+        categoryService.saveCategory(new Category(null, "a", 1L)));
   }
 }

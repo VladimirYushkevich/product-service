@@ -2,20 +2,12 @@ package com.yushkevich.mms.challenge.controller;
 
 import com.yushkevich.mms.challenge.dto.CategoryDTO;
 import com.yushkevich.mms.challenge.model.Category;
-import com.yushkevich.mms.challenge.model.Product;
-import com.yushkevich.mms.challenge.repository.CategoryRepository;
-import com.yushkevich.mms.challenge.repository.ProductRepository;
 import com.yushkevich.mms.challenge.service.CategoryService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
 @RestController
@@ -42,5 +34,17 @@ public class CategoryController {
   List<CategoryDTO> all() {
     log.debug("GET all categories");
     return categoryService.findAllCategories();
+  }
+
+  @PostMapping("/categories")
+  CategoryDTO newCategory(@RequestBody Category newCategory) {
+    log.debug("POST new category {}", newCategory);
+    return categoryService.saveCategory(newCategory);
+  }
+
+  @PutMapping("/categories/{id}")
+  CategoryDTO replaceCategory(@RequestBody Category newCategory, @PathVariable Long id) {
+    log.debug("PUT new category {} for    id = {}", newCategory, id);
+    return categoryService.replaceCategory(id, newCategory);
   }
 }

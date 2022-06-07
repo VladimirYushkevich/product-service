@@ -6,12 +6,12 @@ import com.yushkevich.mms.challenge.repository.CategoryRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import static java.util.function.UnaryOperator.identity;
@@ -20,8 +20,10 @@ import static java.util.function.UnaryOperator.identity;
 @Slf4j
 @AllArgsConstructor
 public class CategoryService {
+  private static final String BREADCRUMB_SEPARATOR = "/";
   private final CategoryRepository categoryRepository;
 
+  @Transactional
   public Future<Optional<CategoryDTO>> findCategory(Long categoryId, String breadcrumbSeparator) {
     return CompletableFuture.supplyAsync(() -> categoryRepository.findById(categoryId))
         .thenCombine(
@@ -29,11 +31,33 @@ public class CategoryService {
             (category, breadcrumb) -> category.map(c -> toCategoryDTO(c, breadcrumb)));
   }
 
+  @Transactional
   public List<CategoryDTO> findAllCategories() {
     return StreamSupport.stream(categoryRepository.findAll().spliterator(), false)
         .parallel()
-        .map(c -> toCategoryDTO(c, buildBreadcrumb(c.getId(), "/")))
+        .map(c -> toCategoryDTO(c, buildBreadcrumb(c.getId(), BREADCRUMB_SEPARATOR)))
         .collect(Collectors.toList());
+  }
+
+  @Transactional
+  public CategoryDTO saveCategory(Category category) {
+    final Category savedCategory = categoryRepository.save(category);
+    return toCategoryDTO(
+        savedCategory, buildBreadcrumb(savedCategory.getId(), BREADCRUMB_SEPARATOR));
+  }
+
+  @Transactional
+  public CategoryDTO replaceCategory(Long id, Category newCategory) {
+    return categoryRepository
+        .findById(id)
+        .map(oldCategory -> updateCategory(newCategory, oldCategory))
+        .orElseGet(() -> updateCategory(newCategory, new Category(id, null, null)));
+  }
+
+  private CategoryDTO updateCategory(Category newCategory, Category oldCategory) {
+    oldCategory.setName(newCategory.getName());
+    oldCategory.setParentId(newCategory.getParentId());
+    return saveCategory(oldCategory);
   }
 
   private CategoryDTO toCategoryDTO(Category category, String breadcrumb) {
@@ -42,15 +66,13 @@ public class CategoryService {
   }
 
   private String buildBreadcrumb(Long categoryId, String separator) {
-    final Map<Long, Category> categories = getAllCategories();
-    final Deque<String> breadcrumb = new LinkedList<>();
-
-    return String.join(separator, buildBreadcrumb(categories, categoryId, breadcrumb));
+    return String.join(
+        separator, buildBreadcrumb(getAllCategories(), categoryId, new LinkedList<>()));
   }
 
   private Deque<String> buildBreadcrumb(
       Map<Long, Category> categories, Long categoryId, Deque<String> breadcrumb) {
-    Optional<Category> maybeCategory = Optional.ofNullable(categories.get(categoryId));
+    final Optional<Category> maybeCategory = Optional.ofNullable(categories.get(categoryId));
     if (maybeCategory.isEmpty()) {
       return breadcrumb;
     } else {
