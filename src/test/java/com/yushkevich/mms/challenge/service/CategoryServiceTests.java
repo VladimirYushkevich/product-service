@@ -19,7 +19,7 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class CategoryServiceTest {
+public class CategoryServiceTests {
   @Mock private CategoryRepository categoryRepository;
   @InjectMocks private CategoryService categoryService;
 
