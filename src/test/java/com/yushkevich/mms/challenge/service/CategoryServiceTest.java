@@ -16,7 +16,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class CategoryServiceTest {
@@ -115,5 +115,39 @@ public class CategoryServiceTest {
     assertEquals(
         new CategoryDTO(2L, "a", 1L, "root/a"),
         categoryService.saveCategory(new Category(null, "a", 1L)));
+  }
+
+  @Test
+  @DisplayName("Should update existing category and return DTO with breadcrumb.")
+  void shouldUpdateExistingCategoryAndReturnDTO() {
+    Category category = new Category(3L, "new", 2L);
+    when(categoryRepository.findById(any())).thenReturn(Optional.of(category));
+    when(categoryRepository.save(any())).thenReturn(category);
+    when(categoryRepository.findAll())
+        .thenReturn(List.of(new Category(1L, "a", null), new Category(2L, "b", 1L), category));
+
+    assertEquals(
+        new CategoryDTO(3L, "new", 2L, "a/b/new"), categoryService.replaceCategory(3L, category));
+  }
+
+  @Test
+  @DisplayName("Should create new category when it not exists and return DTO with breadcrumb.")
+  void shouldCreateNewCategoryAndReturnDTO() {
+    Category category = new Category(3L, "new", 2L);
+    when(categoryRepository.findById(any())).thenReturn(Optional.empty());
+    when(categoryRepository.save(any())).thenReturn(category);
+    when(categoryRepository.findAll())
+        .thenReturn(List.of(new Category(1L, "a", null), new Category(2L, "b", 1L), category));
+
+    assertEquals(
+        new CategoryDTO(3L, "new", 2L, "a/b/new"), categoryService.replaceCategory(3L, category));
+  }
+
+  @Test
+  @DisplayName("Should delete category.")
+  void shouldDeleteCategory() {
+    categoryService.deleteCategory(anyLong());
+
+    verify(categoryRepository, times(1)).deleteById(anyLong());
   }
 }

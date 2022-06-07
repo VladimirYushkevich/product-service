@@ -44,7 +44,13 @@ public class CategoryController {
 
   @PutMapping("/categories/{id}")
   CategoryDTO replaceCategory(@RequestBody Category newCategory, @PathVariable Long id) {
-    log.debug("PUT new category {} for    id = {}", newCategory, id);
+    log.debug("PUT new category {} for id = {}", newCategory, id);
     return categoryService.replaceCategory(id, newCategory);
+  }
+
+  @DeleteMapping("/categories/{id}")
+  void deleteCategory(@PathVariable Long id) {
+    log.debug("DELETE  category by id = {}", id);
+    categoryService.deleteCategory(id);
   }
 }

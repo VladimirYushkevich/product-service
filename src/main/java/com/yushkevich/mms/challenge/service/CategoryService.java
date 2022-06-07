@@ -54,6 +54,11 @@ public class CategoryService {
         .orElseGet(() -> updateCategory(newCategory, new Category(id, null, null)));
   }
 
+  @Transactional
+  public void deleteCategory(Long id) {
+    categoryRepository.deleteById(id);
+  }
+
   private CategoryDTO updateCategory(Category newCategory, Category oldCategory) {
     oldCategory.setName(newCategory.getName());
     oldCategory.setParentId(newCategory.getParentId());

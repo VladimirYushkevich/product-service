@@ -17,4 +17,8 @@ public interface CategoryRepository extends CrudRepository<Category, Long> {
   @NonNull
   @CacheEvict(value = "categories", allEntries = true)
   <S extends Category> S save(@NonNull S entity);
+
+  @Override
+  @CacheEvict(value = "categories", allEntries = true)
+  void deleteById(@NonNull Long id);
 }
