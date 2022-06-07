@@ -1,6 +1,9 @@
 package com.yushkevich.mms.challenge.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
@@ -9,9 +12,12 @@ import java.util.UUID;
 @Entity
 @Table(name = "products")
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Product {
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @GeneratedValue(generator = "UUID")
+  @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
   @Column(name = "id", nullable = false)
   private UUID id;
 

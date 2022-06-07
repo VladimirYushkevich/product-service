@@ -50,7 +50,7 @@ public class CategoryController {
 
   @DeleteMapping("/categories/{id}")
   void deleteCategory(@PathVariable Long id) {
-    log.debug("DELETE  category by id = {}", id);
+    log.debug("DELETE category by id = {}", id);
     categoryService.deleteCategory(id);
   }
 }
