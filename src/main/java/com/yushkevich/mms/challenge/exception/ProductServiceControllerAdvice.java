@@ -22,4 +22,11 @@ public class ProductServiceControllerAdvice {
   String interruptedHandler(CustomInterruptedException ex) {
     return ex.getMessage();
   }
+
+  @ResponseBody
+  @ExceptionHandler(NotValidRequestException.class)
+  @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
+  String notValidRequestHandler(NotValidRequestException ex) {
+    return ex.getMessage();
+  }
 }

@@ -112,9 +112,8 @@ public class CategoryControllerTest {
 
     mvc.perform(
             post("/categories")
-                .content(
-                    """
-                            {"name":"a","parentId":null,"breadcrumb":"a"}""")
+                .content("""
+                            {"name":"a","parentId":null}""")
                 .contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isCreated())
         .andExpect(
@@ -130,15 +129,36 @@ public class CategoryControllerTest {
 
     mvc.perform(
             put("/categories/{id}", 1L)
-                .content(
-                    """
-                            {"id":1,"name":"b","parentId":null,"breadcrumb":"b"}""")
+                .content("""
+                                {"id":1,"name":"b","parentId":null}""")
                 .contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(
             content()
                 .string("""
             {"id":1,"name":"b","parentId":null,"breadcrumb":"b"}"""));
+  }
+
+  @Test
+  void testUpdateCategoryWithNotValidRequest() throws Exception {
+    doAnswer(
+            invocation -> {
+              throw new IllegalArgumentException("Not valid request");
+            })
+        .when(categoryService)
+        .replaceCategory(any(), any());
+
+    mvc.perform(
+            put("/categories/{id}", 1L)
+                .content("""
+                                {"id":1,"name":"b","parentId":null}""")
+                .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isUnprocessableEntity())
+        .andExpect(
+            content()
+                .string(
+                    """
+            Failed to update category Category(id=1, name=b, parentId=null) by id 1. Probably cyclic dependency found."""));
   }
 
   @Test

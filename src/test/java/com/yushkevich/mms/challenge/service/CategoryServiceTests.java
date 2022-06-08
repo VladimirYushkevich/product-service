@@ -1,6 +1,7 @@
 package com.yushkevich.mms.challenge.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
@@ -114,6 +115,31 @@ public class CategoryServiceTests {
     assertEquals(
         new CategoryDTO(2L, "a", 1L, "root/a"),
         categoryService.saveCategory(new Category(null, "a", 1L)));
+  }
+
+  @Test
+  @DisplayName("Should throw validation exception due to cycling dependency.")
+  void shouldValidateAndPreventCyclingDependency() {
+    final Category category = new Category(1L, "root", null);
+    when(categoryRepository.findById(any())).thenReturn(Optional.of(category));
+    when(categoryRepository.findAll()).thenReturn(List.of(category, new Category(2L, "a", 1L)));
+
+    assertThrows(
+        IllegalArgumentException.class,
+        () -> categoryService.replaceCategory(1L, new Category(null, "root", 2L)));
+  }
+
+  @Test
+  @DisplayName(
+      "Should throw validation exception due to cycling dependency. Id and parentId are equals")
+  void shouldValidateAndPreventCyclingDependencyWhenIdAndParentIdEqual() {
+    final Category category = new Category(1L, "root", null);
+    when(categoryRepository.findById(any())).thenReturn(Optional.of(category));
+    when(categoryRepository.findAll()).thenReturn(List.of(category));
+
+    assertThrows(
+        IllegalArgumentException.class,
+        () -> categoryService.replaceCategory(1L, new Category(null, "root", 1L)));
   }
 
   @Test

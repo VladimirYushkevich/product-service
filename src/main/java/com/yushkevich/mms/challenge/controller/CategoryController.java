@@ -3,6 +3,7 @@ package com.yushkevich.mms.challenge.controller;
 import com.yushkevich.mms.challenge.dto.CategoryDTO;
 import com.yushkevich.mms.challenge.exception.CustomInterruptedException;
 import com.yushkevich.mms.challenge.exception.NotFoundException;
+import com.yushkevich.mms.challenge.exception.NotValidRequestException;
 import com.yushkevich.mms.challenge.model.Category;
 import com.yushkevich.mms.challenge.service.CategoryService;
 import java.util.List;
@@ -50,7 +51,15 @@ class CategoryController {
   @PutMapping("/categories/{id}")
   CategoryDTO replaceCategory(@RequestBody Category newCategory, @PathVariable Long id) {
     log.debug("PUT new category {} for id = {}", newCategory, id);
-    return categoryService.replaceCategory(id, newCategory);
+    try {
+      return categoryService.replaceCategory(id, newCategory);
+    } catch (IllegalArgumentException ex) {
+      log.error("Failed to update category {} by id {}", newCategory, id, ex);
+      throw new NotValidRequestException(
+          String.format(
+              "Failed to update category %s by id %s. Probably cyclic dependency found.",
+              newCategory, id));
+    }
   }
 
   @DeleteMapping("/categories/{id}")

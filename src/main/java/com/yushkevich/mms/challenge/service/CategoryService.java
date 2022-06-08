@@ -59,6 +59,14 @@ public class CategoryService {
   }
 
   private CategoryDTO updateCategory(Category newCategory, Category oldCategory) {
+    // validation for cycling dependency
+    final Long parentId = newCategory.getParentId();
+    if (parentId != null) {
+      final Set<Long> parents = buildParents(getAllCategories(), parentId, new HashSet<>());
+      if (parents.contains(oldCategory.getId())) {
+        throw new IllegalArgumentException("Cyclic dependency found");
+      }
+    }
     oldCategory.setName(newCategory.getName());
     oldCategory.setParentId(newCategory.getParentId());
     return saveCategory(oldCategory);
@@ -72,6 +80,18 @@ public class CategoryService {
   private String buildBreadcrumb(Long categoryId, String separator) {
     return String.join(
         separator, buildBreadcrumb(getAllCategories(), categoryId, new LinkedList<>()));
+  }
+
+  private Set<Long> buildParents(
+      Map<Long, Category> categories, Long categoryId, Set<Long> breadcrumb) {
+    final Optional<Category> maybeCategory = Optional.ofNullable(categories.get(categoryId));
+    if (maybeCategory.isEmpty()) {
+      return breadcrumb;
+    } else {
+      breadcrumb.add(maybeCategory.get().getId());
+    }
+
+    return buildParents(categories, maybeCategory.get().getParentId(), breadcrumb);
   }
 
   private Deque<String> buildBreadcrumb(
