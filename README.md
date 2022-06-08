@@ -1,6 +1,6 @@
 # product-service
 
-### Requirements
+### Description
 
 **Develop application with RESTFul API for managing Products and Categories.**  
 Database Schema:  
@@ -18,6 +18,10 @@ IMPORTANT:
 important for us.  
 • There will be provided also data set for Products and Categories to fill DB. • Please push the code to GitHub and
 share the link with us.
+
+### Requirements  
+* Java17
+* Docker
 
 ### How to run
 Build code and create docker image:
