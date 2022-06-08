@@ -5,12 +5,11 @@ import com.yushkevich.mms.challenge.exception.CustomInterruptedException;
 import com.yushkevich.mms.challenge.exception.NotFoundException;
 import com.yushkevich.mms.challenge.model.Category;
 import com.yushkevich.mms.challenge.service.CategoryService;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 @RestController
 @Slf4j

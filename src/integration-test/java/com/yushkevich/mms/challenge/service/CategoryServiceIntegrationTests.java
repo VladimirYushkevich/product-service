@@ -1,20 +1,19 @@
 package com.yushkevich.mms.challenge.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+
 import com.yushkevich.mms.challenge.dto.CategoryDTO;
 import com.yushkevich.mms.challenge.model.Category;
 import com.yushkevich.mms.challenge.repository.CategoryRepository;
+import java.util.NoSuchElementException;
+import java.util.Optional;
+import java.util.stream.StreamSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.testcontainers.junit.jupiter.Testcontainers;
-
-import java.util.NoSuchElementException;
-import java.util.Optional;
-import java.util.stream.StreamSupport;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @Testcontainers

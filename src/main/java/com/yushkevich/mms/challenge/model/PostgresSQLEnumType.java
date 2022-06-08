@@ -1,14 +1,13 @@
 package com.yushkevich.mms.challenge.model;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Types;
 import org.hibernate.HibernateException;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.type.EnumType;
 
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Types;
-
-public class PostgreSQLEnumType extends EnumType {
+public class PostgresSQLEnumType extends EnumType {
 
   @Override
   public void nullSafeSet(

@@ -3,11 +3,10 @@ package com.yushkevich.mms.challenge.controller;
 import com.yushkevich.mms.challenge.exception.NotFoundException;
 import com.yushkevich.mms.challenge.model.Product;
 import com.yushkevich.mms.challenge.repository.ProductRepository;
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.UUID;
 
 @RestController
 @Slf4j

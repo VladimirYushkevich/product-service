@@ -1,20 +1,19 @@
 package com.yushkevich.mms.challenge.service;
 
+import static java.util.function.UnaryOperator.identity;
+
 import com.yushkevich.mms.challenge.dto.CategoryDTO;
 import com.yushkevich.mms.challenge.model.Category;
 import com.yushkevich.mms.challenge.repository.CategoryRepository;
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
-
-import static java.util.function.UnaryOperator.identity;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Slf4j
