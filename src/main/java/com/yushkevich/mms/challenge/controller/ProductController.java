@@ -6,6 +6,7 @@ import com.yushkevich.mms.challenge.repository.ProductRepository;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -25,6 +26,7 @@ class ProductController {
   }
 
   @PostMapping("/products")
+  @ResponseStatus(HttpStatus.CREATED)
   Product newProduct(@RequestBody Product newProduct) {
     log.debug("POST new product {}", newProduct);
     return productRepository.save(newProduct);
@@ -46,6 +48,7 @@ class ProductController {
   }
 
   @DeleteMapping("/products/{uuid}")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
   void deleteProduct(@PathVariable UUID uuid) {
     log.debug("DELETE product by uuid = {}", uuid);
     productRepository.deleteById(uuid);

@@ -3,12 +3,12 @@ package com.yushkevich.mms.challenge.controller;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import com.yushkevich.mms.challenge.dto.CategoryDTO;
 import com.yushkevich.mms.challenge.service.CategoryService;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -18,6 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
@@ -36,10 +37,11 @@ public class CategoryControllerTest {
 
     mvc.perform(get("/categories/{id}", 1L))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.id").value(1L))
-        .andExpect(jsonPath("$.name").value("name"))
-        .andExpect(jsonPath("$.parentId").doesNotExist())
-        .andExpect(jsonPath("$.breadcrumb").value("breadcrumb"));
+        .andExpect(
+            content()
+                .string(
+                    """
+            {"id":1,"name":"name","parentId":null,"breadcrumb":"breadcrumb"}"""));
   }
 
   @Test
@@ -79,5 +81,70 @@ public class CategoryControllerTest {
     mvc.perform(get("/categories/{id}", 1L))
         .andExpect(status().isServiceUnavailable())
         .andExpect(jsonPath("$").value("Category founding interrupted by id = " + 1L));
+  }
+
+  @Test
+  void testGetAllWithData() throws Exception {
+    when(categoryService.findAllCategories())
+        .thenReturn(
+            List.of(new CategoryDTO(1L, "a", null, "a"), new CategoryDTO(2L, "b", 1L, "a/b")));
+
+    mvc.perform(get("/categories/"))
+        .andExpect(status().isOk())
+        .andExpect(
+            content()
+                .string(
+                    """
+            [{"id":1,"name":"a","parentId":null,"breadcrumb":"a"},{"id":2,"name":"b","parentId":1,"breadcrumb":"a/b"}]"""));
+  }
+
+  @Test
+  void testGetAllWithoutData() throws Exception {
+    mvc.perform(get("/categories/"))
+        .andExpect(status().isOk())
+        .andExpect(content().string("""
+            []"""));
+  }
+
+  @Test
+  void testCreateCategory() throws Exception {
+    when(categoryService.saveCategory(any())).thenReturn(new CategoryDTO(1L, "a", null, "a"));
+
+    mvc.perform(
+            post("/categories")
+                .content(
+                    """
+                            {"name":"a","parentId":null,"breadcrumb":"a"}""")
+                .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isCreated())
+        .andExpect(
+            content()
+                .string("""
+            {"id":1,"name":"a","parentId":null,"breadcrumb":"a"}"""));
+  }
+
+  @Test
+  void testUpdateCategory() throws Exception {
+    when(categoryService.replaceCategory(any(), any()))
+        .thenReturn(new CategoryDTO(1L, "b", null, "b"));
+
+    mvc.perform(
+            put("/categories/{id}", 1L)
+                .content(
+                    """
+                            {"id":1,"name":"b","parentId":null,"breadcrumb":"b"}""")
+                .contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(
+            content()
+                .string("""
+            {"id":1,"name":"b","parentId":null,"breadcrumb":"b"}"""));
+  }
+
+  @Test
+  void testDeleteCategory() throws Exception {
+    mvc.perform(delete("/categories/{id}", 1L))
+        .andExpect(status().isNoContent())
+        .andExpect(content().string(""));
   }
 }

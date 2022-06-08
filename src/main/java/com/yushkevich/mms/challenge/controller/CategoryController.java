@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -40,6 +41,7 @@ class CategoryController {
   }
 
   @PostMapping("/categories")
+  @ResponseStatus(HttpStatus.CREATED)
   CategoryDTO newCategory(@RequestBody Category newCategory) {
     log.debug("POST new category {}", newCategory);
     return categoryService.saveCategory(newCategory);
@@ -52,6 +54,7 @@ class CategoryController {
   }
 
   @DeleteMapping("/categories/{id}")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
   void deleteCategory(@PathVariable Long id) {
     log.debug("DELETE category by id = {}", id);
     categoryService.deleteCategory(id);
