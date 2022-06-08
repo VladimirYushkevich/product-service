@@ -1,5 +1,6 @@
 package com.yushkevich.mms.challenge.controller;
 
+import com.yushkevich.mms.challenge.exception.NotFoundException;
 import com.yushkevich.mms.challenge.model.Product;
 import com.yushkevich.mms.challenge.repository.ProductRepository;
 import lombok.AllArgsConstructor;
@@ -11,7 +12,7 @@ import java.util.UUID;
 @RestController
 @Slf4j
 @AllArgsConstructor
-public class ProductController {
+class ProductController {
   private final ProductRepository productRepository;
 
   @GetMapping("/products/{uuid}")
@@ -20,7 +21,8 @@ public class ProductController {
 
     return productRepository
         .findById(uuid)
-        .orElseThrow(() -> new IllegalArgumentException("Not found"));
+        .orElseThrow(
+            () -> new NotFoundException(String.format("Product not found by uuid = %s", uuid)));
   }
 
   @PostMapping("/products")

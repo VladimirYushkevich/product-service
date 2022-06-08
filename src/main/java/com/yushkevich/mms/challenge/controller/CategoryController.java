@@ -1,6 +1,8 @@
 package com.yushkevich.mms.challenge.controller;
 
 import com.yushkevich.mms.challenge.dto.CategoryDTO;
+import com.yushkevich.mms.challenge.exception.CustomInterruptedException;
+import com.yushkevich.mms.challenge.exception.NotFoundException;
 import com.yushkevich.mms.challenge.model.Category;
 import com.yushkevich.mms.challenge.service.CategoryService;
 import lombok.AllArgsConstructor;
@@ -13,7 +15,7 @@ import java.util.concurrent.ExecutionException;
 @RestController
 @Slf4j
 @AllArgsConstructor
-public class CategoryController {
+class CategoryController {
   private final CategoryService categoryService;
 
   @GetMapping("/categories/{id}")
@@ -23,10 +25,12 @@ public class CategoryController {
       return categoryService
           .findCategory(id, "/")
           .get()
-          .orElseThrow(() -> new RuntimeException("Not found"));
-    } catch (InterruptedException | ExecutionException e) {
-      log.error("Failed to find category");
-      throw new RuntimeException("Interrupted");
+          .orElseThrow(
+              () -> new NotFoundException(String.format("Category not found by id = %s", id)));
+    } catch (InterruptedException | ExecutionException ex) {
+      log.error("Failed to find category by id {}", id, ex);
+      throw new CustomInterruptedException(
+          String.format("Category founding interrupted by id = %s", id));
     }
   }
 

@@ -7,7 +7,7 @@ plugins {
 
 ext {
     testContainersVersion = '1.17.2'
-    springdocOpenapiUiVersion = '1.6.4'
+    springdocOpenapiUiVersion = '1.6.8'
 }
 
 group = 'com.yushkevich.mms.challenge'
