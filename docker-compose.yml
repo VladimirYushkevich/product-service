@@ -4,10 +4,6 @@ services:
   postgres:
     image: postgres:14.3
     container_name: postgres
-    #    deploy:
-    #      resources:
-    #        limits:
-    #          memory: 512M
     environment:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: 123
@@ -27,3 +23,13 @@ services:
     volumes:
       - ./src/main/resources/db/migration:/flyway/sql
     command: -connectRetries=3 -baselineOnMigrate=true migrate
+
+  product-service:
+    image: product-service
+    container_name: product-service
+    depends_on:
+      - flyway
+    environment:
+      DATASOURCE_URL: jdbc:postgresql://postgres:5432/mms
+    ports:
+      - "8080:8080"

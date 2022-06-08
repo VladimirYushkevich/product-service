@@ -1,24 +1,37 @@
-# Getting Started
+# product-service
 
-### Reference Documentation
-For further reference, please consider the following sections:
+### Requirements
 
-* [Official Gradle documentation](https://docs.gradle.org)
-* [Spring Boot Gradle Plugin Reference Guide](https://docs.spring.io/spring-boot/docs/2.7.0/gradle-plugin/reference/html/)
-* [Create an OCI image](https://docs.spring.io/spring-boot/docs/2.7.0/gradle-plugin/reference/html/#build-image)
-* [Spring Web](https://docs.spring.io/spring-boot/docs/2.7.0/reference/htmlsingle/#web)
-* [Spring Data JPA](https://docs.spring.io/spring-boot/docs/2.7.0/reference/htmlsingle/#data.sql.jpa-and-spring-data)
+**Develop application with RESTFul API for managing Products and Categories.**  
+Database Schema:  
+• Create schema to store products and categories. (DB can be chosen on your own)  
+CRUD Operation:  
+Client should perform CRUD operations on Products and Categories. It would be nice also to have ability to get full
+category path for the products.  
+TECHNOLOGY:
+• Java or C++ as programming language  
+• Optional: Spring Boot as a core framework for Java for a comparable framework for C++  
+• Introduce Swagger documentation  
+• Any other technologies/libraries can be chosen on your own  
+IMPORTANT:  
+• Please keep Code Quality Standards in mind, while working on your task. • Your approach toward the problem is also
+important for us.  
+• There will be provided also data set for Products and Categories to fill DB. • Please push the code to GitHub and
+share the link with us.
 
-### Guides
-The following guides illustrate how to use some features concretely:
-
-* [Building a RESTful Web Service](https://spring.io/guides/gs/rest-service/)
-* [Serving Web Content with Spring MVC](https://spring.io/guides/gs/serving-web-content/)
-* [Building REST services with Spring](https://spring.io/guides/tutorials/bookmarks/)
-* [Accessing Data with JPA](https://spring.io/guides/gs/accessing-data-jpa/)
-
-### Additional Links
-These additional references should also help you:
-
-* [Gradle Build Scans – insights for your project's build](https://scans.gradle.com#gradle)
+### How to run
+Build code and create docker image:
+```
+./gradlew clean build && docker image build -t product-service .
+```
+Run docker compose file:
+```
+docker-compose up -d
+```
+Then you can check out API via [SWAGGER]  
+(http://localhost:8080/swagger-ui/index.html)
+Stop docker compose
+```
+docker-compose down
+```
 
