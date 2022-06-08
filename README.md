@@ -28,8 +28,7 @@ Run docker compose file:
 ```
 docker-compose up -d
 ```
-Then you can check out API via [SWAGGER]  
-(http://localhost:8080/swagger-ui/index.html)
+Then you can check out API via [SWAGGER](http://localhost:8080/swagger-ui/index.html)  
 Stop docker compose
 ```
 docker-compose down
